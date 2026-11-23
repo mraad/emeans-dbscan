@@ -1,0 +1,36 @@
+{
+  "n": 20000,
+  "noise": 0.08,
+  "trials": 150,
+  "emeans_dbscan": {
+    "best_params": {
+      "k": 111,
+      "eps": 0.16409119617016146,
+      "min_pts": 74
+    },
+    "train_ari": 1.0,
+    "tuning_seconds": 14.537500042002648,
+    "share_trials_ari_ge_0.99": 0.6333333333333333,
+    "test_ari": 0.9997999999995001,
+    "test_seconds": 0.1074819170171395,
+    "clusters": 2,
+    "noise_share": 0.0
+  },
+  "dbscan": {
+    "best_params": {
+      "eps": 0.12428569251737426,
+      "min_pts": 56
+    },
+    "train_ari": 0.9996000199960006,
+    "tuning_seconds": 20.95816920901416,
+    "share_trials_ari_ge_0.99": 0.41333333333333333,
+    "test_ari": 0.999100224995507,
+    "test_seconds": 0.12824241700582206,
+    "clusters": 2,
+    "noise_share": 0.00015
+  },
+  "emeans_k2": {
+    "test_ari": 0.25438207762151854,
+    "test_seconds": 0.10178908301168121
+  }
+}
