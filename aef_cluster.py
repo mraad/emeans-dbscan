@@ -12,7 +12,6 @@ import json
 import os
 import pathlib
 import platform
-import socket
 import time
 
 import faiss
@@ -97,9 +96,12 @@ class GPU:
         return C.float().cpu().numpy(), lab.cpu().numpy().ravel().astype(np.int64)
 
 
+HOST = f"{platform.system()}-{platform.machine()}".lower()   # not the hostname: it can identify a person or a device
+
+
 def out_dir(tag):
     """A new result folder. Fails when it exists, so that a rerun cannot overwrite recorded results."""
-    d = HERE / "out" / (socket.gethostname().split(".")[0] + tag)
+    d = HERE / "out" / (HOST + tag)
     try:
         d.mkdir(parents=True)
     except FileExistsError:
@@ -163,7 +165,7 @@ def main():
     out = out_dir(a.tag)
     gpu = GPU() if ("gpu" in a.final_backends or a.tune_backend == "gpu") else None
     trainers = {"cpu": train_cpu, **({"gpu": gpu.train} if gpu else {})}
-    R = {"host": socket.gethostname().split(".")[0], "machine": platform.machine(), "processor": platform.processor(),
+    R = {"host": HOST, "machine": platform.machine(), "processor": platform.processor(),
          "threads": faiss.omp_get_max_threads(), "versions": versions(), "args": vars(a)}
     if gpu:
         R["gpu"] = gpu.torch.cuda.get_device_name(0)

@@ -70,7 +70,6 @@ Limits: the benchmark data is synthetic, the test uses one seed, and the CPU is 
 | `build_html.py` | Builds `blog-post.html` and `blogger-body.html` from `blog-post.md`. |
 | `explainer.html` | Short technical description of the project. One HTML page with the images embedded. |
 | `results.json`, `bench_results.json`, `bench.log` | Recorded results. |
-| `tasks/todo.md` | Work plan. |
 
 ## Run
 

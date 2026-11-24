@@ -11,7 +11,6 @@ Writes out/<host><tag>/results.json and, for k = 3, out/<host><tag>/test_map_k3.
 import argparse
 import json
 import platform
-import socket
 import time
 
 import faiss
@@ -30,7 +29,7 @@ a = p.parse_args()
 out = A.out_dir(a.tag)
 gpu = A.GPU() if a.backend == "gpu" else None
 train = gpu.train if gpu else A.train_cpu
-R = {"host": socket.gethostname().split(".")[0], "machine": platform.machine(), "backend": a.backend, "threads": faiss.omp_get_max_threads(),
+R = {"host": A.HOST, "machine": platform.machine(), "backend": a.backend, "threads": faiss.omp_get_max_threads(),
      "versions": A.versions(),
      "seeds": SEEDS, "nepochs": 5}
 

@@ -4,3 +4,10 @@ __pycache__/
 run.log
 data/
 app/test/reference.json
+tasks/
+logs/v1/
+out/v1/
+out/*_fbase/
+out/*_fafter/
+img/cairo_map_*_cpu.jpg
+img/cairo_map_*_gpu.jpg
