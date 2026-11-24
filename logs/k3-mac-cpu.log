@@ -1,0 +1,20 @@
+Installed 18 packages in 108ms
+17:36:03 tune k=2 land ARI 0.6990
+17:36:10 tune k=3 land ARI 0.7151
+17:36:16 tune k=4 land ARI 0.6663
+17:36:23 tune k=5 land ARI 0.4046
+17:36:31 tune k=6 land ARI 0.3429
+17:36:37 tune k=7 land ARI 0.3118
+17:36:44 tune k=8 land ARI 0.2943
+17:36:51 tune k=9 land ARI 0.2711
+17:36:57 tune k=10 land ARI 0.2303
+17:37:04 tune k=11 land ARI 0.2052
+17:37:11 tune k=12 land ARI 0.1904
+17:37:18 tune k=13 land ARI 0.1813
+17:37:24 tune k=14 land ARI 0.1672
+17:37:31 tune k=15 land ARI 0.1520
+17:37:38 tune k=16 land ARI 0.1466
+17:39:45 test k=2 land ARI 0.4490 32.76s
+17:41:42 test k=3 land ARI 0.6658 32.57s
+17:43:37 test k=8 land ARI 0.3656 32.32s
+done

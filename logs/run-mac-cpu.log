@@ -1,0 +1,12 @@
+14:02:07 tune window: 16,777,216 valid vectors, load 3s
+14:05:52 Optuna combo: 224s, best {'k': 199, 'eps': 0.034556626617712874, 'min_pts': 89}, land ARI 0.8116
+14:06:37 Optuna plain DBSCAN: 45s, best {'eps': 0.06464043514234663, 'min_pts': 321}, land ARI 0.8019
+14:06:40 test window: 16,777,216 valid vectors, load 3s
+14:07:25 final cpu: {'ari': 0.3574908994569276, 'nmi': 0.40543684281898285, 'purity': 0.8760420083999634, 'land_ari': 0.3528313470061987, 'land_nmi': 0.38649008249303235, 'land_purity': 0.8758373741548872, 'clusters': 122, 'noise_share': 0.0, 'emeans_s': 39.6474515000009, 'dbscan_s': 0.0009572500130161643, 'total_s': 39.70465783303371, 'min_pts_scaled': 1493}
+14:09:27 plain DBSCAN n=10000: 0.3s ARI 0.4190
+14:09:27 plain DBSCAN n=20000: 0.7s ARI 0.4326
+14:09:30 plain DBSCAN n=40000: 2.6s ARI 0.4353
+14:09:40 plain DBSCAN n=80000: 10.3s ARI 0.4488
+14:10:23 plain DBSCAN n=160000: 42.0s ARI 0.4660
+14:13:16 plain DBSCAN n=320000: 173.4s ARI 0.4767
+14:13:17 done

@@ -1,0 +1,14 @@
+test: 2 AEF tiles
+  block 10/25
+  block 20/25
+  block 25/25
+  checked 2 patches against the .vrt files
+test: AEF 187s
+test: WorldCover classes {10: 968094, 20: 288627, 30: 211944, 40: 2021535, 50: 6125556, 60: 6845601, 80: 301606, 90: 14253}, total 189s
+tune: 4 AEF tiles
+  block 10/25
+  block 20/25
+  block 25/25
+  checked 2 patches against the .vrt files
+tune: AEF 141s
+tune: WorldCover classes {10: 696282, 20: 155209, 30: 86306, 40: 3781120, 50: 1401210, 60: 10398135, 80: 229095, 90: 29859}, total 143s

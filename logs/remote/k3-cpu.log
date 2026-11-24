@@ -1,0 +1,19 @@
+08:39:00 tune k=2 land ARI 0.6990
+08:39:14 tune k=3 land ARI 0.7151
+08:39:29 tune k=4 land ARI 0.6663
+08:39:44 tune k=5 land ARI 0.4046
+08:39:59 tune k=6 land ARI 0.3429
+08:40:13 tune k=7 land ARI 0.3118
+08:40:29 tune k=8 land ARI 0.2943
+08:40:44 tune k=9 land ARI 0.2711
+08:40:59 tune k=10 land ARI 0.2303
+08:41:15 tune k=11 land ARI 0.2052
+08:41:31 tune k=12 land ARI 0.1904
+08:41:48 tune k=13 land ARI 0.1813
+08:42:04 tune k=14 land ARI 0.1672
+08:42:20 tune k=15 land ARI 0.1520
+08:42:36 tune k=16 land ARI 0.1466
+08:47:02 test k=2 land ARI 0.4490 71.74s
+08:51:15 test k=3 land ARI 0.6658 71.26s
+08:55:39 test k=8 land ARI 0.3656 72.92s
+done

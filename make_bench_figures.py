@@ -1,6 +1,6 @@
 # /// script
 # requires-python = ">=3.12"
-# dependencies = ["matplotlib", "numpy"]
+# dependencies = ["matplotlib"]
 # ///
 """Figures for the GPU vs CPU benchmark, from bench_results.json."""
 import json

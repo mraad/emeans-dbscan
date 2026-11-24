@@ -1,0 +1,61 @@
+13:14:37 tune k=2 land ARI 0.6990
+13:14:39 tune k=3 land ARI 0.7153
+13:14:41 tune k=4 land ARI 0.6645
+13:14:44 tune k=5 land ARI 0.4034
+13:14:46 tune k=6 land ARI 0.3440
+13:14:49 tune k=7 land ARI 0.3030
+13:14:51 tune k=8 land ARI 0.2600
+13:14:54 tune k=9 land ARI 0.2274
+13:14:56 tune k=10 land ARI 0.2018
+13:14:59 tune k=11 land ARI 0.1772
+13:15:02 tune k=12 land ARI 0.1643
+13:15:04 tune k=13 land ARI 0.1537
+13:15:07 tune k=14 land ARI 0.1441
+13:15:10 tune k=15 land ARI 0.1417
+13:15:13 tune k=16 land ARI 0.1389
+13:16:11 test k=2 land ARI 0.4491 0.93s
+13:17:03 test k=3 land ARI 0.4653 0.85s
+13:17:49 test k=8 land ARI 0.3516 0.76s
+done
+mac_cpu 1234 {'land_ari': 0.363, 'land_purity': 0.879, 'clusters': 129, 'noise_share': 0.0} 0.61
+mac_cpu 4321 {'land_ari': 0.358, 'land_purity': 0.877, 'clusters': 131, 'noise_share': 0.0} 0.6
+mac_cpu 7 {'land_ari': 0.366, 'land_purity': 0.877, 'clusters': 124, 'noise_share': 0.0} 0.6
+xeon_gpu 1234 {'land_ari': 0.307, 'land_purity': 0.89, 'clusters': 536, 'noise_share': 0.0} 0.96
+xeon_gpu 4321 {'land_ari': 0.299, 'land_purity': 0.888, 'clusters': 547, 'noise_share': 0.0} 0.95
+xeon_gpu 7 {'land_ari': 0.305, 'land_purity': 0.889, 'clusters': 537, 'noise_share': 0.0} 0.95
+xeon_cpu 1234 {'land_ari': 0.494, 'land_purity': 0.802, 'clusters': 3, 'noise_share': 0.365} 4.05
+xeon_cpu 4321 {'land_ari': 0.493, 'land_purity': 0.802, 'clusters': 3, 'noise_share': 0.365} 4.06
+xeon_cpu 7 {'land_ari': 0.497, 'land_purity': 0.803, 'clusters': 3, 'noise_share': 0.362} 4.08
+1 1.22 0.865626 0.6657
+2 0.81 0.865626 0.6657
+3 0.81 0.865626 0.6657
+4 0.8 0.865626 0.6657
+5 0.82 0.865626 0.6657
+6 0.81 0.865626 0.6657
+7 0.8 0.865626 0.6656
+8 0.81 0.865626 0.6657
+9 0.87 0.8453 0.3652
+10 0.8 0.865626 0.6657
+done
+1 1.31 0.865626 0.6657
+2 0.91 0.865626 0.6657
+3 0.92 0.865626 0.6657
+4 0.9 0.865626 0.6657
+5 0.92 0.865626 0.6657
+6 0.9 0.865626 0.6657
+7 0.91 0.865626 0.6656
+8 0.91 0.865626 0.6657
+9 0.98 0.8453 0.3652
+10 0.9 0.865626 0.6657
+done
+1 70.17 0.865626 0.6658
+2 69.99 0.865626 0.6658
+3 70.38 0.8453 0.365
+4 70.46 0.865626 0.6658
+5 70.4 0.865626 0.6658
+6 70.12 0.8453 0.3651
+7 70.13 0.865626 0.6658
+8 70.69 0.865626 0.6658
+9 71.1 0.865626 0.6658
+10 72.59 0.865626 0.6658
+done
