@@ -2,7 +2,7 @@
 
 This repository combines [e-means](https://github.com/facebookresearch/faiss/tree/main/contrib/e_means) (faiss 1.16.0) with DBSCAN to find clusters of any shape. It uses Optuna to tune the method on the two-moons dataset. It also measures e-means and Lloyd k-means on a GPU and on a CPU.
 
-The full article is in [`blog-post.md`](blog-post.md). [`blog-post.html`](blog-post.html) is the same article as one HTML page with the images embedded.
+The full article is in [`blog-post.md`](blog-post.md). [`blog-post.html`](blog-post.html) is the same article as one HTML page with the images embedded. [`explainer.html`](explainer.html) is a short technical description for a new reader.
 
 <img src="img/pipeline.png" width="720" alt="Pipeline: input vectors, e-means micro-clusters, count vectors per centroid, weighted DBSCAN on the centroids, label each vector">
 
@@ -68,6 +68,7 @@ Limits: the benchmark data is synthetic, the test uses one seed, and the CPU is 
 | `make_bench_figures.py` | Benchmark figures in `img/`, from `bench_results.json`. |
 | `make_pipeline_figure.py` | Pipeline diagram `img/pipeline.png`. |
 | `build_html.py` | Builds `blog-post.html` and `blogger-body.html` from `blog-post.md`. |
+| `explainer.html` | Short technical description of the project. One HTML page with the images embedded. |
 | `results.json`, `bench_results.json`, `bench.log` | Recorded results. |
 | `tasks/todo.md` | Work plan. |
 
