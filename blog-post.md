@@ -2,20 +2,22 @@
 
 ## Summary
 
-This article has six parts:
+This article has these parts:
 
 1. It gives the history of k-means and explains how e-means changes it.
 2. It shows a method that combines e-means with DBSCAN. The method finds clusters of any shape.
 3. It uses Optuna to tune the method on the two-moons dataset.
 4. It measures e-means on a GPU and on a CPU.
-5. It compares what the press says about e-means with the faiss source code.
-6. It describes PISCES, a method that claims to improve e-means.
+5. It tests the methods on real satellite embeddings of Cairo.
+6. It compares what the press says about e-means with the faiss source code.
+7. It describes PISCES, a method that claims to improve e-means.
 
 The main results are these:
 
 - On two moons, the combined method gets an adjusted Rand index (ARI) of 0.9998. Plain DBSCAN, tuned with the same budget, gets 0.9991.
 - On a synthetic Gaussian mixture with 1,000,000 vectors, GPU e-means trains in 0.18 s. CPU Lloyd k-means trains in 104.8 s. e-means also has 19% lower error.
 - The GPU is about 162× faster than the CPU for e-means. The GPU is only 17.4× faster than the CPU for Lloyd.
+- On real embeddings of Cairo, the combined method does not beat plain e-means with k = 3: 0.494 against 0.666 (land ARI on the test window).
 
 ## Terms
 
@@ -265,7 +267,100 @@ The benchmark uses a synthetic Gaussian mixture. These are the reasons:
 - **The test uses one seed.** The variation of the error between seeds is not measured.
 - **The test does not include data transfer.** The time to copy the data to the GPU is not in the training time.
 
-## Part 8: What the press says
+## Part 8: A real test on satellite embeddings
+
+### The data
+
+This test uses real embeddings, not synthetic data.
+
+- **Vectors**: AlphaEarth Foundations (AEF) annual embeddings for 2021, from Source Cooperative (CC-BY 4.0). Each 10 m pixel has one vector with 64 dimensions. Each vector has length 1.
+- **Reference labels**: ESA WorldCover 2021, with 8 classes in this area.
+- **Place**: Cairo, Egypt. The Nile and the desert edge are in the area.
+- **Tune window**: 4,096 × 4,096 pixels, directly south of the test window. The two windows do not overlap.
+- **Test window**: 4,096 × 4,096 pixels, which is 16,777,216 vectors.
+- **Score**: ARI against WorldCover on the land pixels only. Water pixels stay in the clustering, but not in the score. DBSCAN noise counts as one group.
+
+The two windows have different class shares. The tune window is 62% bare land and 8% built-up land. The test window is 41% bare land and 37% built-up land.
+
+### The methods
+
+1. **e-means + DBSCAN.** Optuna ran 60 trials on 1,000,000 vectors of the tune window. The objective is the land ARI.
+2. **Plain DBSCAN.** Optuna ran 60 trials on 20,000 vectors of the tune window. DBSCAN is slow for larger samples.
+3. **Plain e-means.** It has one setting, k. The script tried k = 2 to 16 on the same 1,000,000 vectors, with three seeds for each k.
+
+`min_pts` and `min_samples` count vectors. Thus the script multiplies them by the size ratio when the number of vectors changes.
+
+The Cairo script differs from the function in Part 4 in one point. It gives each vector the label from the last training epoch. It does not assign the vectors to the final centroids again. On the tune sample, 1.1% of the labels differ for k = 199 and 1.7% for k = 823. The land ARI of the combined method changes by 0.0002 at most.
+
+Plain e-means uses the same labels as the other methods to select its setting. But it was added after the first results, when a test result pointed to k = 3. The selection of k uses only the tune window. All three backends selected k = 3 there.
+
+### Results
+
+<img src="img/cairo_map.jpg" width="720" style="max-width:100%;height:auto" alt="Four maps of the Cairo test window. Top left: the WorldCover reference. Top right: e-means + DBSCAN with the Mac settings, 122 clusters. Bottom left: e-means + DBSCAN with the Xeon settings, 3 clusters and 36% noise in white. Bottom right: plain e-means with k = 3. Each cluster has the colour of its most frequent WorldCover class.">
+
+| Method | Settings | Tune land ARI | Test land ARI | Clusters, noise |
+|---|---|---|---|---|
+| e-means + DBSCAN, tuned on the Mac | k = 199, eps = 0.035, min_pts = 89 | 0.812 | 0.353 | 122, 0% |
+| e-means + DBSCAN, tuned on the GPU | k = 823, eps = 0.024, min_pts = 10 | 0.785 | 0.307 | 536, 0% |
+| e-means + DBSCAN, tuned on the Xeon | k = 7,393, eps = 0.055, min_pts = 29,600 | 0.808 | 0.494 | 3, 36% |
+| Plain DBSCAN, Mac settings, 320,000 vectors | eps = 0.065, min_samples = 5,136 | 0.802 | 0.493 | |
+| Plain DBSCAN, `xeon` settings, 320,000 vectors | eps = 0.048, min_samples = 1,056 | 0.782 | 0.456 | |
+| e-means, k = 2, mean of three seeds | k = 2 | 0.699 | 0.449 | 2, 0% |
+| **e-means, k = 3, best of ten seeds by objective** | k = 3 | 0.715 | **0.666** | 3, 0% |
+| e-means, k = 8, the class count, mean of three seeds | k = 8 | 0.294 | 0.366 | 8, 0% |
+
+The e-means rows are CPU results. The GPU gives 0.449 for k = 2, 0.666 for the best k = 3 and 0.352 for k = 8 on the test window.
+
+Three clusters match three large groups of land cover. The k = 3 clusters are bare land (95% of the cluster), built-up land (87%) and a mixed cluster. The mixed cluster has 47% crops, 22% trees, 13% built-up land and 7% water.
+
+### k = 3 has two solutions
+
+Plain e-means with k = 3 does not always find the same solution on the test window. The script ran ten seeds on each backend. It then calculated the objective: the mean cosine similarity of each vector to its nearest centroid. A higher value is better. The objective is the mean over all the vectors of the window.
+
+| Solution | Objective | Land ARI | CPU (Mac and Xeon) | GPU BF16 | GPU FP32 |
+|---|---|---|---|---|---|
+| Good | 0.8656 | 0.666 | 8 of 10 | 9 of 10 | 9 of 10 |
+| Bad | 0.8453 | 0.365 | 2 of 10 | 1 of 10 | 1 of 10 |
+
+- **The objective finds the bad solution.** The bad solution has a lower objective. Thus you can run a few seeds and keep the best objective. This needs no labels.
+- **One seed is not enough.** The mean land ARI of the ten seeds is 0.606 on the CPU and 0.636 on the GPU. The Mac and the Xeon gave the same result for each seed. With three other seeds (1234, 4321 and 7), the GPU found the bad solution two times. Its mean was 0.465. The CPU found the good solution three times.
+- **The bad solution is not a GPU effect.** The CPU uses FP32 and also finds the bad solution. FP32 and BF16 input give the same GPU score for each seed, but e-means uses BF16 for the GPU assignment step in both cases. The CPU and the GPU find the bad solution for different seeds. I did not find out why.
+- **The tune window does not show this problem.** All seeds gave the same result on the tune window.
+
+### Speed
+
+All times are for e-means training with 5 epochs on 16,777,216 vectors. The GPU times do not include the copy to the GPU. The Xeon times are from runs without other jobs on the machine.
+
+| k | Mac CPU (16 threads) | Xeon CPU (8 threads) | GPU (RTX A4000) |
+|---|---|---|---|
+| 3 | 32.6 s | 71.3 s | 0.8 s |
+| 8 | 32.3 s | 72.9 s | 0.8 s |
+| 7,393 | not measured | 697 s | 4.0 to 4.2 s |
+
+The GPU is about 90× faster than the Xeon for k = 3 and about 170× faster for k = 7,393. It is about 40× faster than the Mac for k = 3.
+
+Plain DBSCAN grows with the square of the number of vectors. On 320,000 vectors, it took 173 s on the Mac and 694 s on the Xeon.
+
+### Findings
+
+1. **The combined method did not win.** With its best settings, it got a land ARI of 0.494. Plain e-means with k = 3 got 0.666. With k = 3, plain e-means also has no noise label and one setting.
+2. **The tuning score did not predict the test score.** All three tuned settings got 0.78 to 0.82 on the tune window. They got 0.31 to 0.49 on the test window. The test window has much more built-up land.
+3. **A simple model was better here.** The combined method has three settings. It fitted the tune window more closely: 0.81 against 0.715. But it lost on the test window. The simple model fitted the tune window less well and kept its score.
+4. **The settings matter more than the seed.** On the GPU, three seeds changed the land ARI by at most 0.013 for k = 199, and by less than 0.01 for the other two settings, in four runs of the test.
+5. **The maps can mislead.** Each cluster has the colour of its most frequent class. Many small clusters then look correct. Plain e-means with 536 clusters has the same purity as the combined method with 536 clusters (0.89).
+
+### The limits of this test
+
+- **WorldCover is not ground truth.** It is a model product. Its classes are not clusters in the embedding space.
+- **This is one region and one year.** It gives no result for other places.
+- **The tuning used labels.** Real clustering has no labels. Without labels, you must select k in another way.
+- **The k = 3 range was chosen late.** The k = 2 to 16 sweep was added after the first results. The selection used only the tune window, but the choice to test plain e-means was made after a test result.
+- **The optimizer differs.** The combined method had 60 Optuna trials. Plain e-means had 15 values of k with three seeds each.
+- **The two machines got different DBSCAN settings** with the same data and the same seed. The first 20 Optuna trials are the same on both machines. Then Optuna suggests different settings. On the Mac, three combinations of Python, numpy and scikit-learn versions give the same 60 trials. One combination has the same Python release series (3.10) and the same library versions as the Xeon. Thus the versions are not the cause. The processor and the operating system remain. The cause in Optuna is not known. Each pair of settings gives the same land ARI on both machines: 0.802 for the Mac settings and 0.782 for the `xeon` settings.
+- **The data is the same on both machines.** The four data files are identical, byte for byte. The script also checked two random patches of each window against the original tiles.
+- **GPU runs do not repeat exactly.** Four runs of the three-seed test gave land ARI values that differ by at most 0.005 for k = 199. They did not differ for the other two settings. The CPU runs of k = 3 repeat exactly, on both machines.
+
+## Part 9: What the press says
 
 Two texts from AlphaSignal describe e-means. They do not agree:
 
@@ -284,7 +379,7 @@ The two AlphaSignal texts give different baselines for the same speedup numbers.
 
 My own benchmark is not the same test. It uses a different GPU, a different baseline and synthetic data. It shows a 33.6× speedup of GPU e-means (5 epochs) against a plain GPU Lloyd (25 epochs) at n = 1,000,000.
 
-## Part 9: PISCES, a claimed improvement
+## Part 10: PISCES, a claimed improvement
 
 PISCES is on Hugging Face at [Nabidnur/PISCES](https://huggingface.co/Nabidnur/PISCES). The author is "Aryan". The name means "Principal-axis Informed Splitting with Consistent closing, Early revival and Sparse assignment". Its class `aries.PEmeans` is a subclass of `NumpyEmeans`. With all options off, the author says that it gives the same output as e-means.
 
@@ -320,7 +415,7 @@ On DEEP* with 1,000,000 vectors, k = 16,384, 10 seeds, on a 4-core CPU:
 - All runs are on a CPU. The page has no GPU result. On a GPU, the exact search of e-means is already fast (see Part 7).
 - I did not run PISCES. I did not check its numbers.
 
-## Part 10: Procedure to reproduce the results
+## Part 11: Procedure to reproduce the results
 
 ### Two-moons experiment
 
@@ -344,6 +439,21 @@ The run takes about 40 seconds on a laptop CPU.
 
 The full benchmark takes about 40 minutes on `xeon`. CPU Lloyd uses most of this time.
 
+### Cairo test
+
+1. Run `uv run --python 3.12 aef_fetch.py` to make `data/cairo/`. The script downloads the AEF and WorldCover data.
+2. Run `uv run --python 3.12 aef_cluster.py --tag=_my_cpu`. This runs the combined method, plain DBSCAN and the first baselines on the CPU.
+3. Run `uv run --python 3.12 aef_kmeans.py --backend cpu --tag=_my_k3_cpu`. This runs plain e-means.
+4. Run `uv run --python 3.12 aef_k3_seeds.py --backend cpu --tag=_my_k3s_cpu`. This runs k = 3 with ten seeds.
+5. On the GPU computer, use `--tune-backend gpu --final-backends gpu` in step 2 and `--backend gpu` in steps 3 and 4.
+6. For the three-seed test of the combined settings, run `aef_sensitivity.py --tag=_my_sensitivity` on the GPU computer.
+7. The figure script reads fixed folder names in `out/`. Change these names to your folder names.
+8. Run `uv run --python 3.12 make_cairo_figure.py` to make `img/cairo_map.jpg`.
+
+Use a new tag for each run. The scripts stop when the result folder exists, so that they do not overwrite the recorded results.
+
+The test results in this article come from these scripts. Some results files were made on `xeon`.
+
 ## References
 
 - S. Lloyd, "Least squares quantization in PCM", IEEE Transactions on Information Theory, 1982 (Bell Labs report, 1957).
@@ -353,4 +463,6 @@ The full benchmark takes about 40 minutes on `xeon`. CPU Lloyd uses most of this
 - T. Akiba, S. Sano, T. Yanase, T. Ohta and M. Koyama, "Optuna: A next-generation hyperparameter optimization framework", KDD 2019.
 - S. Bessa et al., "e-means: outperforming k-means (in one-tenth the epochs)", [arXiv 2611.09501](https://arxiv.org/abs/2611.09501), 2026. Code: [faiss/contrib/e_means](https://github.com/facebookresearch/faiss/tree/main/contrib/e_means).
 - AlphaSignal, "Meta's e-means Beats 25-Pass Clustering in Just 3 Passes at 45x Speedup", [alphasignal.ai](https://alphasignal.ai/news/meta-s-e-means-beats-25-pass-clustering-in-just-3-passes-at-45x-speedup), 6 November 2026.
+- AlphaEarth Foundations annual embeddings, 2021, Source Cooperative (CC-BY 4.0): [data.source.coop/tge-labs/aef](https://source.coop/tge-labs/aef).
+- ESA WorldCover 2021 v200 (CC-BY 4.0): [esa-worldcover.org](https://esa-worldcover.org).
 - Aryan, "PISCES", [huggingface.co/Nabidnur/PISCES](https://huggingface.co/Nabidnur/PISCES), 2026.
