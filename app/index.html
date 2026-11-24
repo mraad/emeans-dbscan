@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>e-means explorer: Cairo</title>
+  <script type="module" src="https://js.arcgis.com/5.2/"></script>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <calcite-shell>
+    <calcite-navigation slot="header">
+      <calcite-navigation-logo slot="logo" heading="e-means explorer" description="AlphaEarth embeddings 2021, Cairo"></calcite-navigation-logo>
+    </calcite-navigation>
+
+    <calcite-shell-panel slot="panel-start" width="m" id="start">
+      <calcite-panel heading="Settings">
+        <div class="stack">
+          <calcite-label>Window
+            <calcite-segmented-control id="window" width="full">
+              <calcite-segmented-control-item value="test" checked>Test (Cairo)</calcite-segmented-control-item>
+              <calcite-segmented-control-item value="tune">Tune (south)</calcite-segmented-control-item>
+            </calcite-segmented-control>
+          </calcite-label>
+          <calcite-label>Clusters (k)
+            <calcite-slider id="k" min="2" max="64" value="3" step="1" label-handles></calcite-slider>
+          </calcite-label>
+          <calcite-label>Epochs
+            <calcite-slider id="epochs" min="1" max="10" value="5" step="1" label-handles ticks="1" snap></calcite-slider>
+          </calcite-label>
+          <calcite-label>Seed
+            <calcite-input-number id="seed" value="1234" min="0" max="4294967295" integer step="1"></calcite-input-number>
+          </calcite-label>
+          <calcite-label>Training pixels
+            <calcite-segmented-control id="trainN" width="full">
+              <calcite-segmented-control-item value="50000">50k</calcite-segmented-control-item>
+              <calcite-segmented-control-item value="250000" checked>250k</calcite-segmented-control-item>
+              <calcite-segmented-control-item value="10000000">All</calcite-segmented-control-item>
+            </calcite-segmented-control>
+          </calcite-label>
+          <calcite-label layout="inline"><calcite-switch id="live" checked></calcite-switch>Redraw the map after each epoch</calcite-label>
+          <h3>Map</h3>
+          <calcite-label>Colour
+            <calcite-segmented-control id="colour" width="full">
+              <calcite-segmented-control-item value="cluster" checked>Cluster</calcite-segmented-control-item>
+              <calcite-segmented-control-item value="majority">Majority class</calcite-segmented-control-item>
+            </calcite-segmented-control>
+          </calcite-label>
+          <calcite-label>Compare with WorldCover
+            <calcite-segmented-control id="compare" width="full">
+              <calcite-segmented-control-item value="off" checked>Clusters</calcite-segmented-control-item>
+              <calcite-segmented-control-item value="swipe">Swipe</calcite-segmented-control-item>
+              <calcite-segmented-control-item value="wc">WorldCover</calcite-segmented-control-item>
+            </calcite-segmented-control>
+          </calcite-label>
+          <calcite-label>Opacity
+            <calcite-slider id="opacity" min="0" max="100" value="85" label-handles></calcite-slider>
+          </calcite-label>
+        </div>
+        <div slot="footer" class="footer">
+          <div class="row">
+            <calcite-button id="run" width="full" icon-start="play" disabled>Run e-means</calcite-button>
+            <calcite-button id="stop" appearance="outline" icon-start="stop" disabled>Stop</calcite-button>
+          </div>
+          <calcite-progress id="progress" type="determinate" value="0" hidden></calcite-progress>
+          <calcite-notice id="error" kind="danger" icon="exclamation-mark-triangle" closable>
+            <div slot="message"></div>
+          </calcite-notice>
+          <p id="status" role="status"></p>
+        </div>
+      </calcite-panel>
+    </calcite-shell-panel>
+
+    <arcgis-map id="map" basemap="satellite">
+      <arcgis-zoom slot="top-left"></arcgis-zoom>
+      <arcgis-home id="home" slot="top-left"></arcgis-home>
+      <arcgis-scale-bar slot="bottom-left"></arcgis-scale-bar>
+      <calcite-panel id="pixel" slot="top-right" heading="Pixel" closable hidden><div class="stack"></div></calcite-panel>
+    </arcgis-map>
+
+    <calcite-shell-panel slot="panel-end" width="l" id="end">
+      <calcite-panel heading="Result">
+        <div class="stack viz-root">
+          <div id="tiles"></div>
+          <div id="chart"></div>
+          <h3>Clusters</h3>
+          <div id="classes"></div>
+          <div id="clusters"></div>
+          <h3>Runs</h3>
+          <div id="runs"></div>
+        </div>
+      </calcite-panel>
+    </calcite-shell-panel>
+  </calcite-shell>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

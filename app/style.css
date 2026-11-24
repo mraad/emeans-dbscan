@@ -1,0 +1,37 @@
+html, body { margin: 0; height: 100%; }
+#end { --calcite-shell-panel-min-width: 400px; --calcite-shell-panel-width: 400px; }
+#start { --calcite-shell-panel-min-width: 300px; }
+.stack { padding: 12px; display: flex; flex-direction: column; gap: 4px; }
+.footer { flex: 1; }
+.stack > h3 { margin: 8px 0 4px; font-size: 14px; font-weight: 600; }
+.row { display: flex; gap: 8px; }
+.row > #run { flex: 1; }
+#status { margin: 4px 0 0; color: var(--calcite-color-text-3); font-size: 13px; min-height: 1.3em; }
+#pixel { width: 250px; }
+#pixel[hidden] { display: none; }
+
+.viz-root {
+  --surface-1: #fcfcfb; --text-primary: #0b0b0b; --text-secondary: #52514e; --muted: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7; --series-1: #2a78d6;
+  background: var(--surface-1); color: var(--text-primary); font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.viz-root h3 { margin-top: 14px; }
+#tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
+.tile .label { font-size: 12px; color: var(--text-secondary); }
+.tile .value { font-size: 22px; font-weight: 600; }
+.tile .note { font-size: 11px; color: var(--muted); }
+#chart svg { display: block; width: 100%; height: auto; margin-top: 10px; }
+#chart text { font: 11px system-ui, sans-serif; fill: var(--text-secondary); }
+#chart .title { font-weight: 600; fill: var(--text-primary); }
+table { border-collapse: collapse; width: 100%; font-size: 12px; font-variant-numeric: tabular-nums; }
+th { text-align: left; font-weight: 500; color: var(--text-secondary); padding: 3px 4px; border-bottom: 1px solid var(--axis); }
+td { padding: 3px 4px; border-bottom: 1px solid var(--grid); }
+td.num, th.num { text-align: right; }
+tr.pick { cursor: pointer; }
+tr.pick:hover, tr.pick:focus-visible { background: #f0efec; outline: none; }
+tr.pick[aria-pressed="true"] { background: #e1edfb; }
+.swatch { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; box-shadow: 0 0 0 1px rgba(11, 11, 11, .15); }
+.bar { display: flex; gap: 2px; height: 10px; width: 80px; overflow: hidden; }
+.bar span { display: block; min-width: 0; border-radius: 1px; }
+#classes { display: flex; flex-wrap: wrap; gap: 2px 10px; font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
+.hint { font-size: 12px; color: var(--text-secondary); margin: 2px 0; }
